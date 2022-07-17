@@ -26,93 +26,101 @@ A declarative builder for Regex.
 
 
 ```dart
-final regex = Regex.builder(
+final usernameRegex = Regex.builder(
   components: [
-    Anchor.startOfLine,
+    Anchor.startOfLine,                             // ^
     Repeat(
       CharacterClass.union([
-        CharacterClass.letter(LetterCase.lower),
-        CharacterClass.number(),
-        CharacterClass('_-'),
-      ]),
+        CharacterClass.letter(LetterCase.lower),    // [a-z]
+        CharacterClass.number(),                    // [0-9]
+        CharacterClass('_-'),                       // [_-]
+      ]),                                           // [a-z0-9_-]
       range: RepeatRange.between(3, 16),
-    ),
-    Anchor.endOfLine,
+    ),                                              // [a-z0-9_-]{3,16}
+    Anchor.endOfLine,                               // $
   ],
-);
-
-// regex: ^[a-z0-9_-]{3,16}$
+);                                                  // ^[a-z0-9_-]{3,16}$
 ```
 
 ```dart
 final letterAndNumbers = CharacterClass.union([
-  CharacterClass.letter(LetterCase.lower),
-  CharacterClass.number(),
-]);
+  CharacterClass.letter(LetterCase.lower),          // [a-z]
+  CharacterClass.number(),                          // [0-9]
+]);                                                 // [a-z0-9]
 
 final regex = Regex.builder(
   components: [
-    Anchor.startOfLine,
+    Anchor.startOfLine,                             // ^
     OneOrMore(
       CharacterClass.union([
-        letterAndNumbers,
-        CharacterClass.dot,
-      ]),
-    ),
-    Regex.literal('@'),
-    OneOrMore(letterAndNumbers),
-    Regex.literal('.'),
-    OneOrMore(CharacterClass.letter(LetterCase.lower)),
+        letterAndNumbers,                           // [a-z0-9]
+        CharacterClass.dot,                         // [.]
+      ]),                                           // [a-z0-9.]
+    ),                                              // [a-z0-9.]+
+    Regex.literal('@'),                             // @
+    OneOrMore(letterAndNumbers),                    // [a-z0-9]+
+    Regex.literal('.'),                             // \.
+    OneOrMore(
+      CharacterClass.letter(LetterCase.lower)       // [a-z]
+    ),                                              // [a-z]+
     Optionally(Regex.builder(
       components: [
-        Regex.literal('.'),
-        OneOrMore(CharacterClass.letter(LetterCase.lower)),
+        Regex.literal('.'),                         // \.
+        OneOrMore(
+          CharacterClass.letter(LetterCase.lower)   // a-z
+        ),                                          // [a-z]+
       ],
-    )),
-    Anchor.endOfLine,
+    )),                                             // (?:\.[a-z])+?
+    Anchor.endOfLine,                               // $
   ],
   caseSensitive: false,
   multiLine: true,
-);
-
-// regex: ^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(?:\.[a-z]+)?$
+);                                                  // ^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(?:\.[a-z]+)?$
 ```
 
 ```dart
-final html = Regex.builder(components: [
+final regex = Regex.builder(components: [
+  Regex.builder(components: [
+    Regex.literal('<'),                             // <
+    Capture(
+      Regex.builder(
+        components: [
+          CharacterClass.letter(LetterCase.lower),  // [a-z]
+          ZeroOrMore(
+            CharacterClass.union([
+              CharacterClass.letter(),              // [a-zA-Z]
+              CharacterClass.number(),              // [0-9]
+            ]),                                     // [a-zA-Z0-9]
+          ),                                        // [a-zA-Z0-9]*
+        ],
+      ),                                            // [a-z][a-zA-Z0-9]*
+      name: 'tag',
+    ),                                              // (?<tag>[a-z][a-zA-Z0-9]*)?
+    Regex.literal('>'),                             // >
+  ]),                                               // <(?<tag>[a-z][a-zA-Z0-9]*)>
   Capture(
-    Regex.builder(components: [
-      Regex.literal('<'),
-      Capture(
-        Regex.builder(
-          components: [
-            CharacterClass.letter(LetterCase.lower),
-            ZeroOrMore(
-              CharacterClass.union([
-                CharacterClass.letter(),
-                CharacterClass.number(),
-              ]),
-            ),
-          ],
-        ),
-        name: 'tag',
-      ),
-      Regex.literal('>'),
-    ]),
-  ),
-  Capture(OneOrMore(Regex.any(), greedy: false)),
-  Regex.literal('</'),
-  Reference('tag'),
-  Regex.literal('>'),
-]);
+    OneOrMore(Regex.any(), greedy: false),          // .+?
+  ),                                                // (.+?)
+  Regex.literal('</'),                              // </
+  Reference('tag'),                                 // \k<tag>
+  Regex.literal('>'),                               // >
+]);                                                 // <(?<tag>[a-z][a-zA-Z0-9]*)>(.+?)</\k<tag>>
 
-final value = domain
-    .allMatches(url)
-    .map((e) => e.groups(List.generate(e.groupCount, (index) => index + 1)))
-    .toList();
+final html = '<h1>Hello, world!</h1><a>Google</a>';
 
-// regex: (<(?<tag>[a-z][a-zA-Z0-9]*)>)(.+?)</\k<tag>>
-// value: [[<h1>, h1, Hello, world!], [<a>, a, Google]]
+for (final match in regex.allMatches(html)) {
+  print('Content: ${match.group(0)}');
+  print('Tag: ${match.group(1)}');
+  print('Value: ${match.group(2)}');
+}
+
+// Output
+// Content: <h1>Hello, world!</h1>
+// Tag: h1
+// Value: Hello, world!
+// Content: <a>Google</a>
+// Tag: a
+// Value: Google
 ```
 
 ## Additional information

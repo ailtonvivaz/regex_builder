@@ -1,7 +1,7 @@
 name: regex_builder
 description: A declarative builder for Regex.
-version: 0.1.0+1
-# homepage: https://www.example.com
+version: 0.1.0+2
+homepage: https://github.com/ailtonvivaz/regex_builder
 
 environment:
   sdk: ">=2.17.1 <3.0.0"

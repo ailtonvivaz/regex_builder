@@ -77,26 +77,24 @@ void main() {
 
   test('capture', () {
     final domain = Regex.builder(components: [
-      Capture(
-        Regex.builder(components: [
-          Regex.literal('<'),
-          Capture(
-            Regex.builder(
-              components: [
-                CharacterClass.letter(LetterCase.lower),
-                ZeroOrMore(
-                  CharacterClass.union([
-                    CharacterClass.letter(),
-                    CharacterClass.number(),
-                  ]),
-                ),
-              ],
-            ),
-            name: 'tag',
+      Regex.builder(components: [
+        Regex.literal('<'),
+        Capture(
+          Regex.builder(
+            components: [
+              CharacterClass.letter(LetterCase.lower),
+              ZeroOrMore(
+                CharacterClass.union([
+                  CharacterClass.letter(),
+                  CharacterClass.number(),
+                ]),
+              ),
+            ],
           ),
-          Regex.literal('>'),
-        ]),
-      ),
+          name: 'tag',
+        ),
+        Regex.literal('>'),
+      ]),
       Capture(OneOrMore(Regex.any(), greedy: false)),
       Regex.literal('</'),
       Reference('tag'),
@@ -107,11 +105,14 @@ void main() {
 
     print(domain.pattern);
 
-    final value = domain
-        .allMatches(url)
-        .map((e) => e.groups(List.generate(e.groupCount, (index) => index + 1)))
-        .toList();
-    print(value);
+    for (final match in domain.allMatches(url)) {
+      print('Content: ${match.group(0)}');
+      print('Tag: ${match.group(1)}');
+      print('Value: ${match.group(2)}');
+    }
+
+    // final value = domain.allMatches(url).map((e) => e.groups([0, 1, 2]));
+    // print(value);
   });
 
   test('anyOf', () {
