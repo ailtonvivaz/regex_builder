@@ -1,12 +1,9 @@
-import 'package:meta/meta.dart';
-
 import 'regex.dart';
 
 abstract class RegexComponent {
-  String get pattern;
+  String get pattern => regex.pattern;
 
-  @nonVirtual
-  Regex get regex => Regex(pattern);
+  Regex get regex;
 
   const RegexComponent();
 
@@ -17,11 +14,15 @@ abstract class RegexComponent {
 typedef RegexComponents = Iterable<RegexComponent>;
 
 extension RegexComponentsExtension on RegexComponents {
-  String get pattern => map((c) => c.pattern).join();
+  String get pattern => patterns.join();
+
+  List<String> get patterns => map((c) => c.pattern).toList();
 }
 
-abstract class ParentRegexComponent extends RegexComponent {
-  final RegexComponent component;
+mixin RegexComponentPatterned on RegexComponent {
+  @override
+  String get pattern;
 
-  const ParentRegexComponent(this.component);
+  @override
+  Regex get regex => Regex(pattern);
 }

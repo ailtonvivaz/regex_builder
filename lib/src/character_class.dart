@@ -2,7 +2,7 @@ import 'regex_component.dart';
 
 enum LetterCase { lower, upper }
 
-class CharacterClass extends RegexComponent {
+class CharacterClass extends RegexComponent with RegexComponentPatterned {
   final String _pattern;
 
   @override
@@ -16,18 +16,18 @@ class CharacterClass extends RegexComponent {
 
   const CharacterClass(this._pattern);
 
-  factory CharacterClass.union(List<CharacterClass> components) {
+  static CharacterClass union(List<CharacterClass> components) {
     final pattern = components.map((c) => c._pattern).join('');
     return CharacterClass(pattern);
   }
 
-  factory CharacterClass.negation(CharacterClass component) =>
+  static CharacterClass negation(CharacterClass component) =>
       CharacterClass('^${component._pattern}');
 
-  factory CharacterClass.range(String start, String end) =>
+  static CharacterClass range(String start, String end) =>
       CharacterClass('$start-$end');
 
-  factory CharacterClass.letter([LetterCase? letterCase]) {
+  static CharacterClass letter([LetterCase? letterCase]) {
     return CharacterClass.union([
       if (letterCase == LetterCase.lower || letterCase == null)
         CharacterClass.range('a', 'z'),
@@ -36,7 +36,7 @@ class CharacterClass extends RegexComponent {
     ]);
   }
 
-  factory CharacterClass.number([int start = 0, int end = 9]) =>
+  static CharacterClass number([int start = 0, int end = 9]) =>
       CharacterClass.range(start.toString(), end.toString());
 
   static const CharacterClass digit = CharacterClass(r'\d');

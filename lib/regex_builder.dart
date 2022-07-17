@@ -8,7 +8,14 @@ export 'src/any_of.dart';
 export 'src/capture.dart';
 export 'src/character_class.dart';
 export 'src/lookahead.dart';
-export 'src/quantifier.dart' hide Quantifier;
-export 'src/regex_component.dart';
+export 'src/lookbehind.dart';
+
+export 'src/quantifiers/one_or_more.dart';
+export 'src/quantifiers/optionally.dart';
+export 'src/quantifiers/repeat.dart';
+export 'src/quantifiers/zero_or_more.dart';
+
 export 'src/regex.dart';
-export 'src/repeat.dart';
+export 'src/regex_component.dart'
+    hide RegexComponentPatterned, RegexComponents, RegexComponentsExtension;
+export 'src/quantifiers/repeat.dart';

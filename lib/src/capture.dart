@@ -1,6 +1,7 @@
 import 'regex_component.dart';
+import 'parent_regex_component.dart';
 
-class Capture extends ParentRegexComponent {
+class Capture extends ParentRegexComponent with RegexComponentPatterned {
   final String? name;
 
   Capture(
