@@ -63,14 +63,12 @@ final regex = Regex.builder(
     OneOrMore(
       CharacterClass.letter(LetterCase.lower)       // [a-z]
     ),                                              // [a-z]+
-    Optionally(Regex.builder(
-      components: [
-        Regex.literal('.'),                         // \.
-        OneOrMore(
-          CharacterClass.letter(LetterCase.lower)   // a-z
-        ),                                          // [a-z]+
-      ],
-    )),                                             // (?:\.[a-z])+?
+    Optionally(Group([
+      Regex.literal('.'),                           // \.
+      OneOrMore(
+        CharacterClass.letter(LetterCase.lower)     // a-z
+      ),                                            // [a-z]+
+    ])),                                            // (?:\.[a-z])+?
     Anchor.endOfLine,                               // $
   ],
   caseSensitive: false,
@@ -80,26 +78,25 @@ final regex = Regex.builder(
 
 ```dart
 final regex = Regex.builder(components: [
-  Regex.builder(components: [
+  Group(components: [
     Regex.literal('<'),                             // <
-    Capture(
-      Regex.builder(
-        components: [
-          CharacterClass.letter(LetterCase.lower),  // [a-z]
-          ZeroOrMore(
-            CharacterClass.union([
-              CharacterClass.letter(),              // [a-zA-Z]
-              CharacterClass.number(),              // [0-9]
-            ]),                                     // [a-zA-Z0-9]
-          ),                                        // [a-zA-Z0-9]*
-        ],
-      ),                                            // [a-z][a-zA-Z0-9]*
-      name: 'tag',
+    Group(
+      components: [
+        CharacterClass.letter(LetterCase.lower),    // [a-z]
+        ZeroOrMore(
+          CharacterClass.union([
+            CharacterClass.letter(),                // [a-zA-Z]
+            CharacterClass.number(),                // [0-9]
+          ]),                                       // [a-zA-Z0-9]
+        ),                                          // [a-zA-Z0-9]*
+      ],                                          // [a-z][a-zA-Z0-9]*
+      behavior: GroupBehavior.capture('tag'),
     ),                                              // (?<tag>[a-z][a-zA-Z0-9]*)?
     Regex.literal('>'),                             // >
   ]),                                               // <(?<tag>[a-z][a-zA-Z0-9]*)>
-  Capture(
+  Group(
     OneOrMore(Regex.any(), greedy: false),          // .+?
+    behavior: GroupBehavior.capture(),
   ),                                                // (.+?)
   Regex.literal('</'),                              // </
   Reference('tag'),                                 // \k<tag>

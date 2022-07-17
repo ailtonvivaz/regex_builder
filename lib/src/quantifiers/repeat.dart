@@ -35,9 +35,9 @@ class RepeatRange {
 
   const RepeatRange._(this.min, [this.max]);
 
-  const RepeatRange.exactly(int count) : this._(count, count);
-
   const RepeatRange.atLeast(int count) : this._(count, null);
 
   const RepeatRange.between(int min, int max) : this._(min, max);
+
+  const RepeatRange.exactly(int count) : this._(count, count);
 }

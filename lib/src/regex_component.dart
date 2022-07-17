@@ -1,9 +1,16 @@
+import 'character_class.dart';
+import 'group.dart';
 import 'regex.dart';
 
 abstract class RegexComponent {
   String get pattern => regex.pattern;
 
   Regex get regex;
+
+  bool get isUnitary {
+    return [Group, CharacterClass].contains(runtimeType) ||
+        pattern.replaceAll(r'\', '').length == 1;
+  }
 
   const RegexComponent();
 

@@ -22,12 +22,10 @@ void main() {
         OneOrMore(letterAndNumbers),
         Regex.literal('.'),
         OneOrMore(CharacterClass.letter(LetterCase.lower)),
-        Optionally(Regex.builder(
-          components: [
-            Regex.literal('.'),
-            OneOrMore(CharacterClass.letter(LetterCase.lower)),
-          ],
-        )),
+        Optionally(Group(components: [
+          Regex.literal('.'),
+          OneOrMore(CharacterClass.letter(LetterCase.lower)),
+        ])),
         Anchor.endOfLine,
       ],
       caseSensitive: false,
@@ -36,7 +34,7 @@ void main() {
 
     print(emailRegex.pattern);
 
-    final expected = r'^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(?:\.[a-z]+)?$';
+    const expected = r'^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(?:\.[a-z]+)?$';
 
     print(expected);
 
@@ -77,31 +75,32 @@ void main() {
 
   test('capture', () {
     final domain = Regex.builder(components: [
-      Regex.builder(components: [
+      Group(components: [
         Regex.literal('<'),
-        Capture(
-          Regex.builder(
-            components: [
-              CharacterClass.letter(LetterCase.lower),
-              ZeroOrMore(
-                CharacterClass.union([
-                  CharacterClass.letter(),
-                  CharacterClass.number(),
-                ]),
-              ),
-            ],
-          ),
-          name: 'tag',
+        Group(
+          components: [
+            CharacterClass.letter(LetterCase.lower),
+            ZeroOrMore(
+              CharacterClass.union([
+                CharacterClass.letter(),
+                CharacterClass.number(),
+              ]),
+            ),
+          ],
+          behavior: GroupBehavior.capture('tag'),
         ),
         Regex.literal('>'),
       ]),
-      Capture(OneOrMore(Regex.any(), greedy: false)),
+      Group(
+        components: [OneOrMore(Regex.any(), greedy: false)],
+        behavior: GroupBehavior.capture(),
+      ),
       Regex.literal('</'),
       Reference('tag'),
       Regex.literal('>'),
     ]);
 
-    final url = '<h1>Hello, world!</h1><a>Google</a>';
+    const url = '<h1>Hello, world!</h1><a>Google</a>';
 
     print(domain.pattern);
 
@@ -148,7 +147,10 @@ void main() {
 
   test('reference', () {
     final regex = Regex.builder(components: [
-      Capture(OneOrMore(CharacterClass.word), name: 'title'),
+      Group(
+        components: [OneOrMore(CharacterClass.word)],
+        behavior: GroupBehavior.capture('title'),
+      ),
       Regex.literal(', yes '),
       Reference('title'),
     ]);

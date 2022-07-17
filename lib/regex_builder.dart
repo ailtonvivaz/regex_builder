@@ -5,10 +5,8 @@ library regex_builder;
 
 export 'src/anchor.dart';
 export 'src/any_of.dart';
-export 'src/capture.dart';
 export 'src/character_class.dart';
-export 'src/lookahead.dart';
-export 'src/lookbehind.dart';
+export 'src/group.dart';
 
 export 'src/quantifiers/one_or_more.dart';
 export 'src/quantifiers/optionally.dart';
