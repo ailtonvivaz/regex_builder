@@ -1,16 +1,22 @@
 import 'regex_component.dart';
 
-class Regex extends RegexComponent implements Pattern {
+class Regex extends RegexComponent implements RegExp {
   @override
   final String pattern;
 
-  final bool multiLine;
-  final bool caseSensitive;
-  final bool unicode;
-  final bool dotAll;
+  @override
+  final bool isMultiLine;
 
   @override
-  // ignore: invalid_override_of_non_virtual_member
+  final bool isCaseSensitive;
+
+  @override
+  final bool isUnicode;
+
+  @override
+  final bool isDotAll;
+
+  @override
   Regex get regex => this;
 
   const Regex(String pattern) : this._(pattern);
@@ -37,27 +43,84 @@ class Regex extends RegexComponent implements Pattern {
 
   const Regex._(
     this.pattern, {
-    this.multiLine = false,
-    this.caseSensitive = true,
-    this.unicode = false,
-    this.dotAll = false,
-  });
+    bool multiLine = false,
+    bool caseSensitive = true,
+    bool unicode = false,
+    bool dotAll = false,
+  })  : isMultiLine = multiLine,
+        isCaseSensitive = caseSensitive,
+        isUnicode = unicode,
+        isDotAll = dotAll;
+
+  RegExp _toRegExp() => RegExp(
+        pattern,
+        multiLine: isMultiLine,
+        caseSensitive: isCaseSensitive,
+        unicode: isUnicode,
+        dotAll: isDotAll,
+      );
+
+  /// Finds the first match of the regular expression in the string [input].
+  ///
+  /// Returns `null` if there is no match.
+  /// ```dart
+  /// final string = '[00:13.37] This is a chat message.';
+  /// final regex = Regex.builder(components: [
+  ///   Regex.literal('c'),
+  ///   ZeroOrMore(CharacterClass.word),
+  /// ]); // c\w*
+  /// final match = regex.firstMatch(string)!;
+  /// print(match[0]); // chat
+  /// ```
+  @override
+  RegExpMatch? firstMatch(String input) => _toRegExp().firstMatch(input);
 
   @override
-  Iterable<Match> allMatches(String string, [int start = 0]) {
-    return toRegExp().allMatches(string, start);
+  bool hasMatch(String input) => _toRegExp().hasMatch(input);
+
+  @override
+  String? stringMatch(String input) => _toRegExp().stringMatch(input);
+
+  /// Matches this pattern against the string repeatedly.
+  ///
+  /// If [start] is provided, matching will start at that index.
+  ///
+  /// The returned iterable lazily finds non-overlapping matches
+  /// of the pattern in the [string].
+  /// If a user only requests the first match,
+  /// this function should not compute all possible matches.
+  ///
+  /// The matches are found by repeatedly finding the first match
+  /// of the pattern in the string, initially starting from [start],
+  /// and then from the end of the previous match (but always
+  /// at least one position later than the *start* of the previous
+  /// match, in case the pattern matches an empty substring).
+  /// ```dart
+  /// final regex = Regex.builder(components: [
+  ///   Group(
+  ///     components: [OneOrMore(CharacterClass.word)],
+  ///     behavior: GroupBehavior.capture(),
+  ///   ),
+  /// ]); // (\w+)
+  /// var str = 'Dash is a bird';
+  /// Iterable<Match> matches = regex.allMatches(str, 8);
+  /// for (final Match m in matches) {
+  ///   String match = m[0]!;
+  ///   print(match);
+  /// }
+  /// ```
+  /// The output of the example is:
+  /// ```
+  /// a
+  /// bird
+  /// ```
+  @override
+  Iterable<RegExpMatch> allMatches(String input, [int start = 0]) {
+    return _toRegExp().allMatches(input, start);
   }
 
   @override
   Match? matchAsPrefix(String string, [int start = 0]) {
-    return toRegExp().matchAsPrefix(string, start);
+    return _toRegExp().matchAsPrefix(string, start);
   }
-
-  RegExp toRegExp() => RegExp(
-        pattern,
-        multiLine: multiLine,
-        caseSensitive: caseSensitive,
-        unicode: unicode,
-        dotAll: dotAll,
-      );
 }

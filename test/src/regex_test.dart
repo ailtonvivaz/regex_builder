@@ -158,7 +158,7 @@ void main() {
     final input = 'Sir, yes Sir';
     print(regex.pattern);
 
-    expect(regex.toRegExp().hasMatch(input), isTrue);
+    expect(regex.hasMatch(input), isTrue);
   });
 
   test('common regex', () {
@@ -178,5 +178,24 @@ void main() {
     );
 
     print(username);
+  });
+
+  test('doc', () {
+    final regex = Regex.builder(components: [
+      Group(
+        components: [
+          OneOrMore(CharacterClass.word),
+        ],
+        behavior: GroupBehavior.capture(),
+      ),
+    ]);
+    var str = 'Dash is a bird';
+    Iterable<Match> matches = regex.allMatches(str, 8);
+    for (final Match m in matches) {
+      String match = m[0]!;
+      print(match);
+    }
+
+    print(regex.pattern);
   });
 }

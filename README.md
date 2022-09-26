@@ -11,7 +11,7 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages). 
 -->
 
-A declarative builder for Regex.
+A declarative way to write regular expressions in Dart.
 
 ## Features
 
@@ -19,6 +19,7 @@ A declarative builder for Regex.
 
 ## Getting started
 
+Regex conforms with [Pattern](https://api.flutter.dev/flutter/dart-core/Pattern-class.html), thus all
 
 
 ## Usage
