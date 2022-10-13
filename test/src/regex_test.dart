@@ -1,30 +1,29 @@
 import 'package:regex_builder/regex_builder.dart';
-import 'package:regex_builder/src/reference.dart';
 import 'package:test/test.dart';
 
 void main() {
   test('email', () {
-    final letterAndNumbers = CharacterClass.union([
-      CharacterClass.letter(LetterCase.lower),
-      CharacterClass.number(),
+    final letterAndNumbers = CharacterSet([
+      CharacterSet.letter(LetterCase.lower),
+      CharacterSet.number(0, 9),
     ]);
 
-    final emailRegex = Regex.builder(
-      components: [
+    final emailRegex = RegexBuilder(
+      [
         Anchor.startOfLine,
         OneOrMore(
-          CharacterClass.union([
+          CharacterSet([
             letterAndNumbers,
-            CharacterClass.dot,
+            CharacterSet.literal('.'),
           ]),
         ),
-        Regex.literal('@'),
+        Literal('@'),
         OneOrMore(letterAndNumbers),
-        Regex.literal('.'),
-        OneOrMore(CharacterClass.letter(LetterCase.lower)),
-        Optionally(Group(components: [
-          Regex.literal('.'),
-          OneOrMore(CharacterClass.letter(LetterCase.lower)),
+        Literal('.'),
+        OneOrMore(CharacterSet.letter(LetterCase.lower)),
+        Optionally(Group([
+          Literal('.'),
+          OneOrMore(CharacterSet.letter(LetterCase.lower)),
         ])),
         Anchor.endOfLine,
       ],
@@ -74,30 +73,28 @@ void main() {
   });
 
   test('capture', () {
-    final domain = Regex.builder(components: [
-      Group(components: [
-        Regex.literal('<'),
+    final domain = RegexBuilder([
+      Group([
+        Literal('<'),
         Group(
-          components: [
-            CharacterClass.letter(LetterCase.lower),
+          [
+            CharacterSet.letter(LetterCase.lower),
             ZeroOrMore(
-              CharacterClass.union([
-                CharacterClass.letter(),
-                CharacterClass.number(),
+              CharacterSet([
+                CharacterSet.letter(),
+                CharacterSet.digit,
               ]),
             ),
           ],
           behavior: GroupBehavior.capture('tag'),
         ),
-        Regex.literal('>'),
+        Literal('>'),
       ]),
-      Group(
-        components: [OneOrMore(Regex.any(), greedy: false)],
-        behavior: GroupBehavior.capture(),
-      ),
-      Regex.literal('</'),
+      Group([OneOrMore(AnyCharacter(), greedy: false)],
+          behavior: GroupBehavior.capture()),
+      Literal('</'),
       Reference('tag'),
-      Regex.literal('>'),
+      Literal('>'),
     ]);
 
     const url = '<h1>Hello, world!</h1><a>Google</a>';
@@ -115,13 +112,13 @@ void main() {
   });
 
   test('anyOf', () {
-    final regex = AnyOf([
-      CharacterClass('a'),
-      CharacterClass('e'),
-      CharacterClass('i'),
-      CharacterClass('o'),
-      CharacterClass('u'),
-    ]).regex;
+    final regex = ChoiceOf([
+      CharacterSet.literal('a'),
+      CharacterSet.literal('e'),
+      CharacterSet.literal('i'),
+      CharacterSet.literal('o'),
+      CharacterSet.literal('u'),
+    ]).pattern;
     final alphabet = 'abcdefghijklmnopqrstuvwxyz';
     final result = alphabet.replaceAll(regex, '-');
 
@@ -130,13 +127,13 @@ void main() {
   });
 
   test('anyOf multiple', () {
-    final regex = Regex.builder(components: [
-      Regex.literal('Data'),
-      CharacterClass.whitespace,
-      AnyOf([
-        Regex.literal('Analysis'),
-        Regex.literal('Base'),
-        Regex.literal('Analytics'),
+    final regex = RegexBuilder([
+      Literal('Data'),
+      CharacterSet.whitespace,
+      ChoiceOf([
+        Literal('Analysis'),
+        Literal('Base'),
+        Literal('Analytics'),
       ]),
     ]);
 
@@ -146,30 +143,30 @@ void main() {
   });
 
   test('reference', () {
-    final regex = Regex.builder(components: [
+    final regex = RegexBuilder([
       Group(
-        components: [OneOrMore(CharacterClass.word)],
+        [OneOrMore(CharacterSet.word)],
         behavior: GroupBehavior.capture('title'),
       ),
-      Regex.literal(', yes '),
+      Literal(', yes '),
       Reference('title'),
     ]);
 
     final input = 'Sir, yes Sir';
     print(regex.pattern);
 
-    expect(regex.toRegExp().hasMatch(input), isTrue);
+    expect(regex.hasMatch(input), isTrue);
   });
 
   test('common regex', () {
-    final username = Regex.builder(
-      components: [
+    final username = RegexBuilder(
+      [
         Anchor.startOfLine,
         Repeat(
-          CharacterClass.union([
-            CharacterClass.letter(LetterCase.lower),
-            CharacterClass.number(),
-            CharacterClass('_-'),
+          CharacterSet([
+            CharacterSet.letter(LetterCase.lower),
+            CharacterSet.digit,
+            CharacterSet.literal('_-'),
           ]),
           range: RepeatRange.between(3, 16),
         ),
@@ -178,5 +175,21 @@ void main() {
     );
 
     print(username);
+  });
+
+  test('doc', () {
+    final regex = RegexBuilder([
+      Group([
+        OneOrMore(CharacterSet.word),
+      ], behavior: GroupBehavior.capture()),
+    ]);
+    var str = 'Dash is a bird';
+    Iterable<Match> matches = regex.allMatches(str, 8);
+    for (final Match m in matches) {
+      String match = m[0]!;
+      print(match);
+    }
+
+    print(regex.pattern);
   });
 }

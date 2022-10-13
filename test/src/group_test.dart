@@ -3,21 +3,21 @@ import 'package:test/test.dart';
 
 void main() {
   test('one component', () {
-    final group = Group(components: [CharacterClass('a')]);
+    final group = Group([Literal('a')]);
     expect(group.pattern, '(?:a)');
   });
 
   test('multiple components', () {
-    final group = Group(components: [
-      CharacterClass('a'),
-      CharacterClass('b'),
-      CharacterClass('c'),
+    final group = Group([
+      Literal('a'),
+      Literal('b'),
+      Literal('c'),
     ]);
     expect(group.pattern, '(?:abc)');
   });
 
   test('pattern component', () {
-    final group = Group(components: [Regex('abc')]);
+    final group = Group([Literal('abc')]);
     expect(group.pattern, '(?:abc)');
   });
 }

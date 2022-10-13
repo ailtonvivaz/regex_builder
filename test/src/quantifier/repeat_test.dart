@@ -5,13 +5,13 @@ void main() {
   group('atLeast', () {
     group('quantifier', () {
       test('simple quantifier', () {
-        const quantifier = Repeat(Regex('a'), range: RepeatRange.atLeast(3));
+        const quantifier = Repeat(Literal('a'), range: RepeatRange.atLeast(3));
         expect(quantifier.quantifier, '{3,}');
       });
 
       test('greedy quantifier', () {
         const quantifier = Repeat(
-          Regex('a'),
+          Literal('a'),
           range: RepeatRange.atLeast(3),
           greedy: false,
         );
@@ -24,15 +24,15 @@ void main() {
       group('builder', () {
         test('simple regex', () {
           final regex =
-              Repeat(CharacterClass('a'), range: RepeatRange.atLeast(3));
+              Repeat(CharacterSet.literal('a'), range: RepeatRange.atLeast(3));
           expect(regex.pattern, 'a{3,}');
         });
 
         test('composed regex', () {
           final regex = Repeat(
-            Group(components: [
-              CharacterClass('a'),
-              CharacterClass('b'),
+            Group([
+              CharacterSet.literal('a'),
+              CharacterSet.literal('b'),
             ]),
             range: RepeatRange.atLeast(3),
           );
@@ -41,9 +41,9 @@ void main() {
 
         test('group regex', () {
           final regex = Repeat(
-            Group(components: [
-              CharacterClass('a'),
-              CharacterClass('b'),
+            Group([
+              CharacterSet.literal('a'),
+              CharacterSet.literal('b'),
             ]),
             range: RepeatRange.atLeast(3),
           );
@@ -52,9 +52,9 @@ void main() {
 
         test('character class union regex', () {
           final regex = Repeat(
-            CharacterClass.union([
-              CharacterClass('a'),
-              CharacterClass('b'),
+            CharacterSet([
+              CharacterSet.literal('a'),
+              CharacterSet.literal('b'),
             ]),
             range: RepeatRange.atLeast(3),
           );
@@ -64,12 +64,12 @@ void main() {
 
       group('pattern', () {
         test('simple regex', () {
-          const regex = Repeat(Regex('a'), range: RepeatRange.atLeast(3));
+          const regex = Repeat(Literal('a'), range: RepeatRange.atLeast(3));
           expect(regex.pattern, 'a{3,}');
         });
 
         test('composed regex', () {
-          const regex = Repeat(Regex('ab'), range: RepeatRange.atLeast(3));
+          const regex = Repeat(Literal('ab'), range: RepeatRange.atLeast(3));
           expect(regex.pattern, '(?:ab){3,}');
         });
       });
@@ -79,13 +79,13 @@ void main() {
   group('between', () {
     group('quantifier', () {
       test('simple quantifier', () {
-        const quantifier = Repeat(Regex('a'), range: RepeatRange.exactly(4));
+        const quantifier = Repeat(Literal('a'), range: RepeatRange.exactly(4));
         expect(quantifier.quantifier, '{4}');
       });
 
       test('greedy quantifier', () {
         const quantifier = Repeat(
-          Regex('a'),
+          Literal('a'),
           range: RepeatRange.exactly(4),
           greedy: false,
         );
@@ -98,15 +98,15 @@ void main() {
       group('builder', () {
         test('simple regex', () {
           final regex =
-              Repeat(CharacterClass('a'), range: RepeatRange.exactly(4));
+              Repeat(CharacterSet.literal('a'), range: RepeatRange.exactly(4));
           expect(regex.pattern, 'a{4}');
         });
 
         test('composed regex', () {
           final regex = Repeat(
-            Group(components: [
-              CharacterClass('a'),
-              CharacterClass('b'),
+            Group([
+              CharacterSet.literal('a'),
+              CharacterSet.literal('b'),
             ]),
             range: RepeatRange.exactly(4),
           );
@@ -115,9 +115,9 @@ void main() {
 
         test('group regex', () {
           final regex = Repeat(
-            Group(components: [
-              CharacterClass('a'),
-              CharacterClass('b'),
+            Group([
+              CharacterSet.literal('a'),
+              CharacterSet.literal('b'),
             ]),
             range: RepeatRange.exactly(4),
           );
@@ -126,9 +126,9 @@ void main() {
 
         test('character class union regex', () {
           final regex = Repeat(
-            CharacterClass.union([
-              CharacterClass('a'),
-              CharacterClass('b'),
+            CharacterSet([
+              CharacterSet.literal('a'),
+              CharacterSet.literal('b'),
             ]),
             range: RepeatRange.exactly(4),
           );
@@ -138,12 +138,12 @@ void main() {
 
       group('pattern', () {
         test('simple regex', () {
-          const regex = Repeat(Regex('a'), range: RepeatRange.exactly(4));
+          const regex = Repeat(Literal('a'), range: RepeatRange.exactly(4));
           expect(regex.pattern, 'a{4}');
         });
 
         test('composed regex', () {
-          const regex = Repeat(Regex('ab'), range: RepeatRange.exactly(4));
+          const regex = Repeat(Literal('ab'), range: RepeatRange.exactly(4));
           expect(regex.pattern, '(?:ab){4}');
         });
       });
@@ -153,13 +153,13 @@ void main() {
   group('exactly', () {
     group('quantifier', () {
       test('simple quantifier', () {
-        const quantifier = Repeat(Regex('a'), range: RepeatRange.exactly(4));
+        const quantifier = Repeat(Literal('a'), range: RepeatRange.exactly(4));
         expect(quantifier.quantifier, '{4}');
       });
 
       test('greedy quantifier', () {
         const quantifier = Repeat(
-          Regex('a'),
+          Literal('a'),
           range: RepeatRange.exactly(4),
           greedy: false,
         );
@@ -172,15 +172,15 @@ void main() {
       group('builder', () {
         test('simple regex', () {
           final regex =
-              Repeat(CharacterClass('a'), range: RepeatRange.exactly(4));
+              Repeat(CharacterSet.literal('a'), range: RepeatRange.exactly(4));
           expect(regex.pattern, 'a{4}');
         });
 
         test('composed regex', () {
           final regex = Repeat(
-            Group(components: [
-              CharacterClass('a'),
-              CharacterClass('b'),
+            Group([
+              CharacterSet.literal('a'),
+              CharacterSet.literal('b'),
             ]),
             range: RepeatRange.exactly(4),
           );
@@ -189,9 +189,9 @@ void main() {
 
         test('group regex', () {
           final regex = Repeat(
-            Group(components: [
-              CharacterClass('a'),
-              CharacterClass('b'),
+            Group([
+              CharacterSet.literal('a'),
+              CharacterSet.literal('b'),
             ]),
             range: RepeatRange.exactly(4),
           );
@@ -200,9 +200,9 @@ void main() {
 
         test('character class union regex', () {
           final regex = Repeat(
-            CharacterClass.union([
-              CharacterClass('a'),
-              CharacterClass('b'),
+            CharacterSet([
+              CharacterSet.literal('a'),
+              CharacterSet.literal('b'),
             ]),
             range: RepeatRange.exactly(4),
           );
@@ -212,12 +212,12 @@ void main() {
 
       group('pattern', () {
         test('simple regex', () {
-          const regex = Repeat(Regex('a'), range: RepeatRange.exactly(4));
+          const regex = Repeat(Literal('a'), range: RepeatRange.exactly(4));
           expect(regex.pattern, 'a{4}');
         });
 
         test('composed regex', () {
-          const regex = Repeat(Regex('ab'), range: RepeatRange.exactly(4));
+          const regex = Repeat(Literal('ab'), range: RepeatRange.exactly(4));
           expect(regex.pattern, '(?:ab){4}');
         });
       });

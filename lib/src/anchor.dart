@@ -9,7 +9,7 @@ import 'regex_component.dart';
 ///
 /// ## Sample
 ///
-class Anchor extends RegexComponent with RegexComponentPatterned {
+class Anchor extends RegexComponent {
   @override
   final String pattern;
 

@@ -1,6 +1,6 @@
-import 'regex_component.dart';
+import '../regex_component.dart';
 
-class Reference extends RegexComponent with RegexComponentPatterned {
+class Reference extends RegexComponent {
   final String name;
 
   @override

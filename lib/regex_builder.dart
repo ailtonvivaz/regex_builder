@@ -3,17 +3,20 @@
 /// More dartdocs go here.
 library regex_builder;
 
+export 'src/any_character.dart';
 export 'src/anchor.dart';
-export 'src/any_of.dart';
-export 'src/character_class.dart';
-export 'src/group.dart';
+export 'src/choice_of.dart';
+export 'src/literal.dart';
 
-export 'src/quantifiers/one_or_more.dart';
-export 'src/quantifiers/optionally.dart';
-export 'src/quantifiers/repeat.dart';
-export 'src/quantifiers/zero_or_more.dart';
+export 'src/character_set/character_set.dart';
+export 'src/character_set/letter_character_set.dart' show LetterCase;
+export 'src/group/group.dart';
+export 'src/group/reference.dart';
 
-export 'src/regex.dart';
-export 'src/regex_component.dart'
-    hide RegexComponentPatterned, RegexComponents, RegexComponentsExtension;
-export 'src/quantifiers/repeat.dart';
+export 'src/quantifier/one_or_more.dart';
+export 'src/quantifier/optionally.dart';
+export 'src/quantifier/repeat.dart';
+export 'src/quantifier/zero_or_more.dart';
+
+export 'src/regex_builder.dart';
+export 'src/regex_component.dart';
