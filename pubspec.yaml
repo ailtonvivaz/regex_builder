@@ -1,6 +1,6 @@
 name: regex_builder
 description: A declarative builder for Regex.
-version: 0.1.0+5
+version: 0.1.0+6
 homepage: https://github.com/ailtonvivaz/regex_builder
 
 environment:

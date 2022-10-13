@@ -63,7 +63,7 @@ A RegexBuilder is composed of a list of components. The following components are
 A literal is a string of characters that must be matched exactly.
 
 ```dart
-const RegexComponent abc = Literal('abc'); // This represents the pattern 'abc'
+Literal('abc'); // This represents the pattern 'abc'
 ```
 
 ### Wildcards
@@ -71,7 +71,7 @@ const RegexComponent abc = Literal('abc'); // This represents the pattern 'abc'
 A wildcard is a character that matches any character.
 
 ```dart
-const RegexComponent anyCharacter = AnyCharacter(); // This represents the pattern '.'
+AnyCharacter(); // This represents the pattern '.'
 ```
 
 ### Alternation
@@ -79,7 +79,7 @@ const RegexComponent anyCharacter = AnyCharacter(); // This represents the patte
 An alternation is a list of components that could match any of them.
 
 ```dart
-const RegexComponent carOrDog = ChoiceOf([
+ChoiceOf([
   Literal('cat'),
   Literal('dog'),
 ]); // This represents the pattern 'cat|dog'
@@ -94,7 +94,7 @@ Quantifiers are used to specify how many times a component should be matched.
 Matches zero or one time.
 
 ```dart
-const RegexComponent zeroOrMore = ZeroOrMore(Literal('a')); // This represents the pattern 'a*'
+ZeroOrMore(Literal('a')); // This represents the pattern 'a*'
 ```
 
 #### OneOrMore
@@ -102,7 +102,7 @@ const RegexComponent zeroOrMore = ZeroOrMore(Literal('a')); // This represents t
 Matches one or more times.
 
 ```dart
-const RegexComponent oneOrMore = OneOrMore(Literal('a')); // This represents the pattern 'a+'
+OneOrMore(Literal('a')); // This represents the pattern 'a+'
 ```
 
 #### Optionally
@@ -110,7 +110,7 @@ const RegexComponent oneOrMore = OneOrMore(Literal('a')); // This represents the
 Matches zero or one time.
 
 ```dart
-const RegexComponent optionally = Optionally(Literal('a')); // This represents the pattern 'a?'
+Optionally(Literal('a')); // This represents the pattern 'a?'
 ```
 
 #### Repeat
@@ -118,22 +118,22 @@ const RegexComponent optionally = Optionally(Literal('a')); // This represents t
 Matches a specific number of times.
 
 ```dart
-const RegexComponent repeatAtLeast = Repeat(
+Repeat(
   Literal('a'),
   range: RepeatRange.atLeast(3),
 ); // This represents the pattern 'a{3,}'
 
-const RegexComponent repeatAtMost = Repeat(
+Repeat(
   Literal('a'),
   range: RepeatRange.atMost(3),
 ); // This represents the pattern 'a{0,3}'
 
-const RegexComponent repeatExactly = Repeat(
+Repeat(
   Literal('a'),
   range: RepeatRange.exactly(3),
 ); // This represents the pattern 'a{3}'
 
-const RegexComponent repeatBetween = Repeat(
+Repeat(
   Literal('a'),
   range: RepeatRange.between(3, 5),
 ); // This represents the pattern 'a{3,5}'
@@ -147,7 +147,7 @@ A group is a list of components that must be matched together.
 By default, a group is non-capturing.
 
 ```dart
-const RegexComponent group = Group([
+Group([
   Literal('a'),
   Literal('b'),
 ]); // This represents the pattern '(?:ab)'
@@ -158,12 +158,12 @@ const RegexComponent group = Group([
 A capture group is a list of components that must be matched together and will be captured.
 
 ```dart
-const RegexComponent unnamedCapture = Group([
+Group([
   Literal('a'),
   Literal('b'),
 ], behavior: GroupBehavior.capture()); // This represents the pattern '(ab)'
 
-const RegexComponent namedCapture = Group([
+Group([
   Literal('a'),
   Literal('b'),
 ], behavior: GroupBehavior.capture('group_name')); // This represents the pattern '(?<group_name>ab)'
@@ -174,6 +174,6 @@ const RegexComponent namedCapture = Group([
 An anchor is a component that matches the beginning or end of a string.
 
 ```dart
-const RegexComponent startOfSLine = Anchor.startOfLine; // This represents the pattern '^'
-const RegexComponent endOfLine = Anchor.endOfLine; // This represents the pattern '$'
+Anchor.startOfLine; // This represents the pattern '^'
+Anchor.endOfLine; // This represents the pattern '$'
 ```
