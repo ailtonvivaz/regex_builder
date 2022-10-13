@@ -1,5 +1,6 @@
 import 'regex_component.dart';
 
+/// Matches one of the [components].
 class ChoiceOf extends RegexComponent {
   final List<RegexComponent> components;
 

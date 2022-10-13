@@ -19,26 +19,52 @@ A declarative way to write regular expressions in Dart. This package was inspire
 
 RegexBuilder conforms with [RegExp](https://api.flutter.dev/flutter/dart-core/RegExp-class.html), thus all methods and properties are available to use.
 
-The following example finds all matches of word in a string.
+The following example finds all matches of HTML tags in a string.
 
 ```dart
 final regex = RegexBuilder([
-  Group([OneOrMore(CharacterSet.word)])
-]);
+  Group([
+    Literal('<'),                                   // <
+    Group([
+        CharacterSet.letter(LetterCase.lower),      // [a-z]
+        ZeroOrMore(
+          CharacterSet([
+            CharacterSet.letter(),                  // [a-zA-Z]
+            CharacterSet.number(0, 9),              // [0-9]
+          ]),                                       // [a-zA-Z0-9]
+        ),                                          // [a-zA-Z0-9]*
+      ],                                            // [a-z][a-zA-Z0-9]*
+      behavior: GroupBehavior.capture('tag'),
+    ),                                              // (?<tag>[a-z][a-zA-Z0-9]*)?
+    Literal('>'),                                   // >
+  ]),                                               // <(?<tag>[a-z][a-zA-Z0-9]*)>
+  Group(
+    OneOrMore(AnyCharacter(), greedy: false),       // .+?
+    behavior: GroupBehavior.capture(),
+  ),                                                // (.+?)
+  Literal('</'),                                    // </
+  Reference('tag'),                                 // \k<tag>
+  Literal('>'),                                     // >
+]);                                                 // <(?<tag>[a-z][a-zA-Z0-9]*)>(.+?)</\k<tag>>
 
-final str = 'Parse my string';
-Iterable<RegExpMatch> matches = regex.allMatches(str);
-for (final m in matches) {
-  print(m[0]);
+final html = '<h1>Hello, world!</h1><a>Google</a>';
+
+for (final match in regex.allMatches(html)) {
+  print('All Match: ${match.group(0)}');
+  print('Tag: ${match.group(1)}');
+  print('Content: ${match.group(2)}');
 }
 ```
 
 The output of the example is:
 
 ```
-Parse
-my
-string
+All Match: <h1>Hello, world!</h1>
+Tag: h1
+Content: Hello, world!
+All Match: <a>Google</a>
+Tag: a
+Content: Google
 ```
 
 ## Components
