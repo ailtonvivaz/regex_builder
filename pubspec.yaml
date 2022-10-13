@@ -1,6 +1,6 @@
 name: regex_builder
-description: A declarative builder for Regex.
-version: 0.1.0+6
+description: A declarative way to write regular expressions in Dart.
+version: 0.1.0+7
 homepage: https://github.com/ailtonvivaz/regex_builder
 
 environment:

@@ -192,25 +192,4 @@ void main() {
 
     print(regex.pattern);
   });
-
-  test('regexp', () {
-//     RegExp exp = RegExp(r'(\w+)');
-// String str = 'Parse my string';
-// RegExpMatch? match = exp.firstMatch(str);
-// print(match![0]); // "Parse"
-
-    final regex = RegexBuilder([
-      Group([OneOrMore(CharacterSet.word)])
-    ]);
-
-    final str = 'Parse my string';
-    Iterable<RegExpMatch> matches = regex.allMatches(str);
-    for (final m in matches) {
-      print(m[0]);
-    }
-    const RegexComponent group = Capture([
-      Literal('a'),
-      Literal('b'),
-    ]);
-  });
 }
