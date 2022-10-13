@@ -11,115 +11,169 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages). 
 -->
 
-A declarative way to write regular expressions in Dart.
+A declarative way to write regular expressions in Dart. This package was inspired by [Swift RegexBuilder](https://developer.apple.com/documentation/regexbuilder).
+
+> **Important:** This package is still in development and could change until the first stable release.
 
 ## Features
 
-A declarative builder for Regex.
+RegexBuilder conforms with [RegExp](https://api.flutter.dev/flutter/dart-core/RegExp-class.html), thus all methods and properties are available to use.
 
-## Getting started
-
-Regex conforms with [Pattern](https://api.flutter.dev/flutter/dart-core/Pattern-class.html), thus all
-
-
-## Usage
-
-
+The following example finds all matches of word in a string.
 
 ```dart
-final usernameRegex = Regex.builder(
-  components: [
-    Anchor.startOfLine,                             // ^
-    Repeat(
-      CharacterSet([
-        CharacterSet.letter(LetterCase.lower),      // [a-z]
-        CharacterSet.number(0, 9),                  // [0-9]
-        CharacterSet.literal('_-'),                 // [_-]
-      ]),                                           // [a-z0-9_-]
-      range: RepeatRange.between(3, 16),
-    ),                                              // [a-z0-9_-]{3,16}
-    Anchor.endOfLine,                               // $
-  ],
-);                                                  // ^[a-z0-9_-]{3,16}$
-```
+final regex = RegexBuilder([
+  Group([OneOrMore(CharacterSet.word)])
+]);
 
-```dart
-final letterAndNumbers = CharacterSet([
-  CharacterSet.letter(LetterCase.lower),            // [a-z]
-  CharacterSet.number(0, 9),                        // [0-9]
-]);                                                 // [a-z0-9]
-
-final regex = Regex.builder(
-  components: [
-    Anchor.startOfLine,                             // ^
-    OneOrMore(
-      CharacterSet([
-        letterAndNumbers,                           // [a-z0-9]
-        CharacterSet.literal('.'),                  // [.]
-      ]),                                           // [a-z0-9.]
-    ),                                              // [a-z0-9.]+
-    Literal('@'),                                   // @
-    OneOrMore(letterAndNumbers),                    // [a-z0-9]+
-    Literal('.'),                                   // \.
-    OneOrMore(
-      CharacterSet.letter(LetterCase.lower)         // [a-z]
-    ),                                              // [a-z]+
-    Optionally(Group([
-      Literal('.'),                                 // \.
-      OneOrMore(
-        CharacterSet.letter(LetterCase.lower)       // a-z
-      ),                                            // [a-z]+
-    ])),                                            // (?:\.[a-z])+?
-    Anchor.endOfLine,                               // $
-  ],
-  caseSensitive: false,
-  multiLine: true,
-);                                                  // ^[a-z0-9.]+@[a-z0-9]+\.[a-z]+(?:\.[a-z]+)?$
-```
-
-```dart
-final regex = Regex.builder(components: [
-  Group([
-    Literal('<'),                                   // <
-    Group(
-      components: [
-        CharacterSet.letter(LetterCase.lower),      // [a-z]
-        ZeroOrMore(
-          CharacterSet([
-            CharacterSet.letter(),                  // [a-zA-Z]
-            CharacterSet.number(0, 9),              // [0-9]
-          ]),                                       // [a-zA-Z0-9]
-        ),                                          // [a-zA-Z0-9]*
-      ],                                            // [a-z][a-zA-Z0-9]*
-      behavior: GroupBehavior.capture('tag'),
-    ),                                              // (?<tag>[a-z][a-zA-Z0-9]*)?
-    Literal('>'),                                   // >
-  ]),                                               // <(?<tag>[a-z][a-zA-Z0-9]*)>
-  Group(
-    OneOrMore(AnyCharacter(), greedy: false),          // .+?
-    behavior: GroupBehavior.capture(),
-  ),                                                // (.+?)
-  Literal('</'),                                    // </
-  Reference('tag'),                                 // \k<tag>
-  Literal('>'),                                     // >
-]);                                                 // <(?<tag>[a-z][a-zA-Z0-9]*)>(.+?)</\k<tag>>
-
-final html = '<h1>Hello, world!</h1><a>Google</a>';
-
-for (final match in regex.allMatches(html)) {
-  print('Content: ${match.group(0)}');
-  print('Tag: ${match.group(1)}');
-  print('Value: ${match.group(2)}');
+final str = 'Parse my string';
+Iterable<RegExpMatch> matches = regex.allMatches(str);
+for (final m in matches) {
+  print(m[0]);
 }
-
-// Output
-// Content: <h1>Hello, world!</h1>
-// Tag: h1
-// Value: Hello, world!
-// Content: <a>Google</a>
-// Tag: a
-// Value: Google
 ```
 
-## Additional information
+The output of the example is:
 
+```
+Parse
+my
+string
+```
+
+## Components
+
+A RegexBuilder is composed of a list of components. The following components are available:
+
+- [Literal](#literal)
+- [Wildcards](#wildcards)
+- [Alternation](#alternation)
+- [Quantifiers](#quantifiers)
+  - [ZeroOrMore](#zeroormore)
+  - [OneOrMore](#oneormore)
+  - [Optionally](#optionally)
+  - [Repeat](#repeat)
+- [CharacterSet](#characterset)
+- [Group](#group)
+  - [Capture](#capture)
+- [Anchor](#anchor)
+
+### Literal
+
+A literal is a string of characters that must be matched exactly.
+
+```dart
+const RegexComponent abc = Literal('abc'); // This represents the pattern 'abc'
+```
+
+### Wildcards
+
+A wildcard is a character that matches any character.
+
+```dart
+const RegexComponent anyCharacter = AnyCharacter(); // This represents the pattern '.'
+```
+
+### Alternation
+
+An alternation is a list of components that could match any of them.
+
+```dart
+const RegexComponent carOrDog = ChoiceOf([
+  Literal('cat'),
+  Literal('dog'),
+]); // This represents the pattern 'cat|dog'
+```
+
+### Quantifiers
+
+Quantifiers are used to specify how many times a component should be matched.
+
+#### ZeroOrMore
+
+Matches zero or one time.
+
+```dart
+const RegexComponent zeroOrMore = ZeroOrMore(Literal('a')); // This represents the pattern 'a*'
+```
+
+#### OneOrMore
+
+Matches one or more times.
+
+```dart
+const RegexComponent oneOrMore = OneOrMore(Literal('a')); // This represents the pattern 'a+'
+```
+
+#### Optionally
+
+Matches zero or one time.
+
+```dart
+const RegexComponent optionally = Optionally(Literal('a')); // This represents the pattern 'a?'
+```
+
+#### Repeat
+
+Matches a specific number of times.
+
+```dart
+const RegexComponent repeatAtLeast = Repeat(
+  Literal('a'),
+  range: RepeatRange.atLeast(3),
+); // This represents the pattern 'a{3,}'
+
+const RegexComponent repeatAtMost = Repeat(
+  Literal('a'),
+  range: RepeatRange.atMost(3),
+); // This represents the pattern 'a{0,3}'
+
+const RegexComponent repeatExactly = Repeat(
+  Literal('a'),
+  range: RepeatRange.exactly(3),
+); // This represents the pattern 'a{3}'
+
+const RegexComponent repeatBetween = Repeat(
+  Literal('a'),
+  range: RepeatRange.between(3, 5),
+); // This represents the pattern 'a{3,5}'
+```
+
+### CharacterSet
+
+### Group
+
+A group is a list of components that must be matched together.
+By default, a group is non-capturing.
+
+```dart
+const RegexComponent group = Group([
+  Literal('a'),
+  Literal('b'),
+]); // This represents the pattern '(?:ab)'
+```
+
+#### Capture
+
+A capture group is a list of components that must be matched together and will be captured.
+
+```dart
+const RegexComponent unnamedCapture = Group([
+  Literal('a'),
+  Literal('b'),
+], behavior: GroupBehavior.capture()); // This represents the pattern '(ab)'
+
+const RegexComponent namedCapture = Group([
+  Literal('a'),
+  Literal('b'),
+], behavior: GroupBehavior.capture('group_name')); // This represents the pattern '(?<group_name>ab)'
+```
+
+### Anchor
+
+An anchor is a component that matches the beginning or end of a string.
+
+```dart
+const RegexComponent startOfSLine = Anchor.startOfLine; // This represents the pattern '^'
+const RegexComponent endOfLine = Anchor.endOfLine; // This represents the pattern '$'
+```
