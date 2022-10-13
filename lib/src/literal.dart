@@ -1,5 +1,6 @@
 import 'regex_component.dart';
 
+/// A literal is a string of characters that must be matched exactly.
 class Literal extends RegexComponent {
   final String literal;
 

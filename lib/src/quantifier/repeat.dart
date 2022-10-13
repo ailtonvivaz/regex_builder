@@ -2,6 +2,9 @@ import 'package:meta/meta.dart';
 
 import 'quantifier.dart';
 
+/// Matches the [component] a specific number of times.
+///
+/// The amount of times is defined by [range].
 class Repeat extends Quantifier {
   final RepeatRange range;
 
@@ -21,18 +24,25 @@ abstract class RepeatRange {
   @internal
   const RepeatRange.internal();
 
+  /// Matches the [component] zero or more times.
   const factory RepeatRange.zeroOrMore() = ZeroOrMoreRepeatRange;
 
+  /// Matches the [component] one or more times.
   const factory RepeatRange.oneOrMore() = OneOrMoreRepeatRange;
 
+  /// Matches the [component] zero or one time.
   const factory RepeatRange.optionally() = OptionallyRepeatRange;
 
+  /// Matches the [component] at least [count] times.
   const factory RepeatRange.atLeast(int count) = AtLeastRepeatRange;
 
+  /// Matches the [component] at most [count] times.
   const factory RepeatRange.atMost(int count) = AtMostRepeatRange;
 
+  /// Matches the [component] between [min] and [max] times.
   const factory RepeatRange.between(int min, int max) = BetweenRepeatRange;
 
+  /// Matches the [component] exactly [count] times.
   const factory RepeatRange.exactly(int count) = ExactlyRepeatRange;
 }
 
