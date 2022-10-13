@@ -74,6 +74,8 @@ A wildcard is a character that matches any character.
 AnyCharacter(); // This represents the pattern '.'
 ```
 
+> **Note:** In order to match a literal dot, use the Literal component `Literal('.')`.
+
 ### Alternation
 
 An alternation is a list of components that could match any of them.
