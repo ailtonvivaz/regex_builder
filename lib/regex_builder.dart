@@ -16,5 +16,6 @@ export 'src/anchor.dart';
 export 'src/any_character.dart';
 export 'src/choice_of.dart';
 export 'src/literal.dart';
+export 'src/lookahead.dart';
 export 'src/regex_builder.dart';
 export 'src/regex_component.dart';
