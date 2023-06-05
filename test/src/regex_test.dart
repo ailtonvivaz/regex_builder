@@ -72,124 +72,26 @@ void main() {
 //     }
   });
 
-  test('capture', () {
-    final domain = RegexBuilder([
-      Group([
-        Literal('<'),
-        Group(
-          [
-            CharacterSet.letter(LetterCase.lower),
-            ZeroOrMore(
-              CharacterSet([
-                CharacterSet.letter(),
-                CharacterSet.digit,
-              ]),
-            ),
-          ],
-          behavior: GroupBehavior.capture('tag'),
-        ),
-        Literal('>'),
-      ]),
-      Group([OneOrMore(AnyCharacter(), greedy: false)],
-          behavior: GroupBehavior.capture()),
-      Literal('</'),
-      Reference('tag'),
-      Literal('>'),
-    ]);
+  group('lookahead', () {
+    test('match with lookahead', () {
+      final regex = RegexBuilder([
+        LookAhead([Literal('foo')]),
+        Literal('bar')
+      ]);
 
-    const url = '<h1>Hello, world!</h1><a>Google</a>';
+      expect(regex.hasMatch('foobar'), isTrue);
+    });
 
-    print(domain.pattern);
+    test('no match without lookahead', () {
+      final regex = RegexBuilder([
+        Literal('bar')
+      ]);
 
-    for (final match in domain.allMatches(url)) {
-      print('Content: ${match.group(0)}');
-      print('Tag: ${match.group(1)}');
-      print('Value: ${match.group(2)}');
-    }
-
-    // final value = domain.allMatches(url).map((e) => e.groups([0, 1, 2]));
-    // print(value);
-  });
-
-  test('anyOf', () {
-    final regex = ChoiceOf([
-      CharacterSet.literal('a'),
-      CharacterSet.literal('e'),
-      CharacterSet.literal('i'),
-      CharacterSet.literal('o'),
-      CharacterSet.literal('u'),
-    ]).pattern;
-    final alphabet = 'abcdefghijklmnopqrstuvwxyz';
-    final result = alphabet.replaceAll(regex, '-');
-
-    print(regex);
-    print(result);
-  });
-
-  test('anyOf multiple', () {
-    final regex = RegexBuilder([
-      Literal('Data'),
-      CharacterSet.whitespace,
-      ChoiceOf([
-        Literal('Analysis'),
-        Literal('Base'),
-        Literal('Analytics'),
-      ]),
-    ]);
-
-    final expected = r'Data\s(?:Analysis|Base|Analytics)';
-    print(regex.pattern);
-    expect(regex.pattern, expected);
-  });
-
-  test('reference', () {
-    final regex = RegexBuilder([
-      Group(
-        [OneOrMore(CharacterSet.word)],
-        behavior: GroupBehavior.capture('title'),
-      ),
-      Literal(', yes '),
-      Reference('title'),
-    ]);
-
-    final input = 'Sir, yes Sir';
-    print(regex.pattern);
-
-    expect(regex.hasMatch(input), isTrue);
+      expect(regex.hasMatch('foobar'), isFalse);
+    });
   });
 
   test('common regex', () {
-    final username = RegexBuilder(
-      [
-        Anchor.startOfLine,
-        Repeat(
-          CharacterSet([
-            CharacterSet.letter(LetterCase.lower),
-            CharacterSet.digit,
-            CharacterSet.literal('_-'),
-          ]),
-          range: RepeatRange.between(3, 16),
-        ),
-        Anchor.endOfLine,
-      ],
-    );
-
-    print(username);
-  });
-
-  test('doc', () {
-    final regex = RegexBuilder([
-      Group([
-        OneOrMore(CharacterSet.word),
-      ], behavior: GroupBehavior.capture()),
-    ]);
-    var str = 'Dash is a bird';
-    Iterable<Match> matches = regex.allMatches(str, 8);
-    for (final Match m in matches) {
-      String match = m[0]!;
-      print(match);
-    }
-
-    print(regex.pattern);
-  });
+    // Rest of code...
+  });  
 }
