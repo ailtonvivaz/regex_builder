@@ -10,21 +10,20 @@ class RegexBuilder implements RegExp {
   final bool isCaseSensitive;
 
   @override
-  final bool isUnicode;
+  String get pattern {
+    final lookAheads = <String>[];
+    final otherComponents = <String>[];
 
-  @override
-  final bool isDotAll;
+    for (final component in components) {
+      if (component is LookAhead) {
+        lookAheads.add(component.pattern);
+      } else {
+        otherComponents.add(component.pattern);
+      }
+    }
 
-  const RegexBuilder(
-    this.components, {
-    bool multiLine = false,
-    bool caseSensitive = true,
-    bool unicode = true,
-    bool dotAll = false,
-  })  : isMultiLine = multiLine,
-        isCaseSensitive = caseSensitive,
-        isUnicode = unicode,
-        isDotAll = dotAll;
+    return '${lookAheads.join()}${otherComponents.join()}';
+  }
 
   @override
   String get pattern => components.map((e) => e.pattern).join();
